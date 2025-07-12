@@ -3,20 +3,26 @@ import { TonConnect } from '@tonconnect/sdk';
 import '../styles/Home.css';
 import Logout from '../components/Logout';
 import { useUser } from '../src/context/UserContext';
+import { useNavigate } from 'react-router-dom';
+
 
 const connector = new TonConnect({
   manifestUrl: 'https://aquacoinx.github.io/Spin-2-earn/tonconnect-manifest.json',
 });
 
 const PRIZES = [
-  { value: 5, currency: 'AQCNX', type: 'Common', chance: 45 },
-  { value: "Try again", currency: '', type: "common", chance: 10 },
-  { value: 10, currency: 'TON', type: 'Rare', chance: 20 },
-  { value: 100, currency: '$', type: 'Voucher', chance: 5 },
-  { value: 20, currency: 'AQCNX', type: 'Common', chance: 20 },
-  { value: 50, currency: 'AQCNX', type: 'Uncommon', chance: 8 },
-  { value: 0.3, currency: 'TON', type: 'Epic', chance: 2 },
+  { value: 5, currency: 'AQCNX', type: 'Common', chance: 30, angle: 0 },
+  { value: 10, currency: 'AQCNX', type: 'Common', chance: 20, angle: 36 },
+  { value: 15, currency: 'AQCNX', type: 'Uncommon', chance: 10, angle: 72 },
+  { value: 20, currency: 'AQCNX', type: 'Rare', chance: 8, angle: 108 },
+  { value: 0.01, currency: 'TON', type: 'Epic', chance: 7, angle: 144 },
+  { value: 0.02, currency: 'TON', type: 'Epic', chance: 6, angle: 180 },
+  { value: 0.05, currency: 'TON', type: 'Epic', chance: 5, angle: 216 },
+  { value: 0.1, currency: 'TON', type: 'Epic', chance: 5, angle: 252 },
+  { value: 0.2, currency: 'TON', type: 'Epic', chance: 4.5, angle: 288 },
+  { value: 10, currency: '$', type: 'Voucher', chance: 0.5, angle: 324 },
 ];
+
 
 function Home() {
   const [wallet, setWallet] = useState(null);
@@ -33,12 +39,21 @@ function Home() {
   const prizeTypeRef = useRef();
   const voucherNoteRef = useRef();
 
+  const navigate = useNavigate(); // ✅ declared before useEffect
+
+  useEffect(() => {
+    if (!user) {
+      navigate('/login');
+    }
+  }, [user, navigate]);
+
   useEffect(() => {
     connector.restoreConnection().then((connectedWallet) => {
       if (connectedWallet) setWallet(connectedWallet);
     });
     connector.onStatusChange(setWallet);
   }, []);
+
 
   const connectWallet = async () => {
     const universalLink = await connector.connect({
@@ -61,7 +76,7 @@ function Home() {
     }
 
     try {
-      const response = await fetch('https://spin2winapi.onrender.com/withdraw', {
+      const response = await fetch('https://spin2winapi-wfc9.onrender.com/withdraw', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -104,68 +119,80 @@ function Home() {
   };
 
   const spin = async () => {
-    if (spinsLeft <= 0 || isSpinning) return;
-    setIsSpinning(true);
-    try {
-      const response = await fetch('https://spin2winapi.onrender.com/spin', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email: user?.email }),
-      });
+  if (spinsLeft <= 0 || isSpinning) return;
+  setIsSpinning(true);
 
-      const data = await response.json();
-      if (!response.ok) {
-        alert(data.error || 'Spin failed.');
-        setIsSpinning(false);
-        return;
-      }
+  try {
+    const response = await fetch('https://spin2winapi-wfc9.onrender.com/spin', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email: user?.email }),
+    });
 
-      const selectedIndex = PRIZES.findIndex(
-        (p) => p.value === data.value && p.currency === data.currency && p.type === data.type
-      );
+    const data = await response.json();
 
-      if (selectedIndex === -1) {
-        alert('Invalid reward data');
-        setIsSpinning(false);
-        return;
-      }
-
-      const steps = [];
-      for (let i = 0; i < 15; i++) {
-        steps.push(Math.floor(Math.random() * PRIZES.length));
-      }
-      steps.push(selectedIndex);
-
-      let index = 0;
-      const interval = setInterval(() => {
-        setHighlightIndex(steps[index]);
-        index++;
-        if (index >= steps.length) {
-          clearInterval(interval);
-
-          const segment = PRIZES[selectedIndex];
-          if (segment.currency !== '') {
-            setRewards((prev) => {
-              const updated = { ...prev };
-              if (segment.currency === 'AQCNX') updated.AQCNX += segment.value;
-              else if (segment.currency === 'TON') updated.TON += segment.value;
-              else if (segment.currency === '$') updated.vouchers += segment.value;
-              return updated;
-            });
-            setRewardHistory((prev) => [segment, ...prev.slice(0, 9)]);
-            setSpinsLeft((prev) => prev - 1);
-          }
-
-          showPrizeDisplay(segment);
-          setIsSpinning(false);
-        }
-      }, 100);
-    } catch (err) {
-      console.error(err);
-      alert('Something went wrong!');
+    if (!response.ok) {
+      alert(data.error || 'Spin failed.');
       setIsSpinning(false);
+      return;
     }
-  };
+
+    // 🔍 Match backend prize with local PRIZES
+    const selectedIndex = PRIZES.findIndex(
+      (p) =>
+        p.value === data.value &&
+        p.currency === data.currency &&
+        p.type === data.type &&
+        p.angle === data.angle
+    );
+
+    if (selectedIndex === -1) {
+      alert('Invalid reward data');
+      setIsSpinning(false);
+      return;
+    }
+
+    // 🔄 Animation
+    const steps = [];
+    for (let i = 0; i < 15; i++) {
+      steps.push(Math.floor(Math.random() * PRIZES.length));
+    }
+    steps.push(selectedIndex);
+
+    let index = 0;
+    const interval = setInterval(() => {
+      setHighlightIndex(steps[index]);
+      index++;
+      if (index >= steps.length) {
+        clearInterval(interval);
+
+        const segment = PRIZES[selectedIndex];
+
+        // 🎁 Update rewards
+        if (segment.currency !== '') {
+          setRewards((prev) => {
+            const updated = { ...prev };
+            if (segment.currency === 'AQCNX') updated.AQCNX += segment.value;
+            else if (segment.currency === 'TON') updated.TON += segment.value;
+            else if (segment.currency === '$') updated.vouchers += segment.value;
+            return updated;
+          });
+
+          setRewardHistory((prev) => [segment, ...prev.slice(0, 9)]);
+          setSpinsLeft((prev) => prev - 1);
+        }
+
+        showPrizeDisplay(segment);
+        setIsSpinning(false);
+      }
+    }, 100);
+  } catch (err) {
+    console.error(err);
+    alert('Something went wrong!');
+    setIsSpinning(false);
+  }
+};
+
 
   const buySpins = (amount) => {
     setSpinsLeft((prev) => prev + amount);
@@ -178,21 +205,31 @@ function Home() {
     }, 2000);
   };
   useEffect(() => {
-    const fetchUserBalance = async () => {
+    const fetchUserData = async () => {
       if (!user?.email) return;
-      const res = await fetch(`https://spin2winapi.onrender.com/user?email=${user.email}`);
-      const data = await res.json();
-      if (res.ok) {
+      try {
+        const res = await fetch(`https://spin2winapi-wfc9.onrender.com/user?email=${user.email}`);
+        const data = await res.json();
+
+        if (!res.ok) {
+          console.error(data.error);
+          return;
+        }
+
+        setSpinsLeft(data.spinsLeft);
         setRewards({
           AQCNX: data.reward_balance_aqcnx,
           TON: data.reward_balance_ton,
           vouchers: data.reward_vouchers,
         });
+      } catch (err) {
+        console.error('Failed to fetch user data:', err);
       }
     };
 
-    fetchUserBalance();
+    fetchUserData();
   }, [user?.email]);
+
 
 
   return (
@@ -250,7 +287,7 @@ function Home() {
               <div
                 key={idx}
                 className={`glow-segment circular ${highlightIndex === idx ? 'glow' : ''}`}
-                style={{ transform: `rotate(${(360 / PRIZES.length) * idx}deg) translate(0, -40px)`, paddingTop: 10 }}
+                style={{ transform: `rotate(${(360 / PRIZES.length) * idx}deg) translate(0, -50px)`, paddingTop: 10 }}
 
               >
                 <span>{prize.value} {prize.currency}</span>
