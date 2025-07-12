@@ -51,7 +51,9 @@ const Login = () => {
         setFormData={setFormData}
         loading={loading}
       />
-
+      <div className="change">
+        <a className='link1' href="/forgotpassword">Forgot password</a>
+      </div>
       <div className="change">
         Don't have an Account?
         <button className="btn" onClick={() => navigate('/signup')}>Signup</button>

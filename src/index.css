@@ -111,3 +111,8 @@ input::placeholder {
   opacity: 0.5;
   cursor: not-allowed;
 }
+.link1{
+  font-size: 18px;
+  text-decoration: none;
+  color: aliceblue;
+}
