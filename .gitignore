@@ -27,7 +27,3 @@ Thumbs.db
 # Cache
 .cache/
 *.tsbuildinfo
-
-# Misc
-*.tgz
-*.zip
