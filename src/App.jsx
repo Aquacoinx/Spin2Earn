@@ -5,6 +5,8 @@ import Signup from '../pages/SignUp';
 import Home from '../pages/Home';
 import LandingPage from '../pages/LandingPage';
 import Success from '../pages/Success';
+import ForgotPassword from '../pages/ForgotPassword';
+import ResetPassword from '../pages/ResetPassword';
 
 function App() {
   return (
@@ -15,6 +17,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path='/spin2win' element={<Home/>}/>
         <Route path='/success' element={<Success/>}/>
+        <Route path='/forgotpassword' element={<ForgotPassword/>}/>
+        <Route path= '/reset' element={<ResetPassword/>}/>
       </Routes>
     </Router>
   );
