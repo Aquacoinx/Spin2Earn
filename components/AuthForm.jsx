@@ -1,7 +1,12 @@
-import React from 'react';
+import React, { useState } from 'react';
 
 const AuthForm = ({ type, onSubmit, formData, setFormData }) => {
   const isLogin = type === 'login';
+  const [ShowType, setShowtype] = useState('password');
+
+  const toggleShow = () => {
+    setShowtype((prev) => (prev === 'password' ? 'text' : 'password'));
+  };
 
   return (
     <form onSubmit={onSubmit} className="card" style={{ maxWidth: '400px', margin: 'auto' }}>
@@ -29,15 +34,32 @@ const AuthForm = ({ type, onSubmit, formData, setFormData }) => {
         style={{ marginBottom: '1rem' }}
       />
 
-      <input
-        type="password"
-        placeholder="Password"
-        required
-        value={formData.password}
-        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-        className="btn"
-        style={{ marginBottom: '1rem' }}
-      />
+      <div style={{ position: 'relative', marginBottom: '1rem' }}>
+        <input
+          type={ShowType}
+          placeholder="Password"
+          required
+          value={formData.password}
+          onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+          className="btn"
+          style={{ width: '100%' }}
+        />
+        <span
+          onClick={toggleShow}
+          style={{
+            position: 'absolute',
+            right: '10px',
+            top: '50%',
+            transform: 'translateY(-50%)',
+            cursor: 'pointer',
+            color: '#007bff',
+            fontWeight: 'bold',
+            fontSize: '0.9rem'
+          }}
+        >
+          {ShowType === 'password' ? 'Show' : 'Hide'}
+        </span>
+      </div>
 
       <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
         {isLogin ? 'Login' : 'Create Account'}
