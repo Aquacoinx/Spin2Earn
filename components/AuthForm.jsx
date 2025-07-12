@@ -1,23 +1,20 @@
 import React, { useState } from 'react';
 
-const AuthForm = ({ type, onSubmit, formData, setFormData }) => {
+const AuthForm = ({ type, onSubmit, formData, setFormData, loading }) => {
   const isLogin = type === 'login';
-  const [ShowType, setShowtype] = useState('password');
+  const [showType, setShowType] = useState('password');
 
   const toggleShow = () => {
-    setShowtype((prev) => (prev === 'password' ? 'text' : 'password'));
+    setShowType((prev) => (prev === 'password' ? 'text' : 'password'));
   };
 
   return (
     <form onSubmit={onSubmit} className="card" style={{ maxWidth: '400px', margin: 'auto' }}>
-      <div className="card-title">{isLogin ? '🔐 Login' : '📝 Sign Up'}</div>
-
       {!isLogin && (
         <input
           type="text"
           placeholder="Username"
-          required
-          value={formData.username}
+          value={formData.username || ''}
           onChange={(e) => setFormData({ ...formData, username: e.target.value })}
           className="btn"
           style={{ marginBottom: '1rem' }}
@@ -30,13 +27,13 @@ const AuthForm = ({ type, onSubmit, formData, setFormData }) => {
         required
         value={formData.email}
         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-        className="btn1"
+        className="btn"
         style={{ marginBottom: '1rem' }}
       />
 
       <div style={{ position: 'relative', marginBottom: '1rem' }}>
         <input
-          type={ShowType}
+          type={showType}
           placeholder="Password"
           required
           value={formData.password}
@@ -57,12 +54,21 @@ const AuthForm = ({ type, onSubmit, formData, setFormData }) => {
             fontSize: '0.9rem'
           }}
         >
-          {ShowType === 'password' ? 'Show' : 'Hide'}
+          {showType === 'password' ? 'Show' : 'Hide'}
         </span>
       </div>
 
-      <button type="submit" className="btn btn-primary" style={{ width: '100%' }}>
-        {isLogin ? 'Login' : 'Create Account'}
+      <button
+        type="submit"
+        className="btn btn-primary"
+        style={{ width: '100%' }}
+        disabled={loading}
+      >
+        {loading ? (
+          <span className="spinner" />
+        ) : (
+          isLogin ? 'Login' : 'Create Account'
+        )}
       </button>
     </form>
   );

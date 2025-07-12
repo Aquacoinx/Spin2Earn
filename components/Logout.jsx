@@ -8,7 +8,7 @@ const LogoutButton = () => {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://localhost:5000/logout', {
+      const res = await fetch('https://spin2winapi-wfc9.onrender.com/logout', {
         method: 'POST',
       });
 
@@ -26,7 +26,7 @@ const LogoutButton = () => {
     }
   };
 
-  return <button onClick={handleLogout}>Logout</button>;
+  return <button onClick={handleLogout} className='btn'>Logout</button>;
 };
 
 export default LogoutButton;

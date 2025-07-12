@@ -672,3 +672,8 @@ body {
     z-index: 3;
     transition: transform 0.2s ease;
 }
+.upper{
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}

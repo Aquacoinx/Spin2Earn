@@ -1,15 +1,18 @@
 import React, { useState } from 'react';
 import AuthForm from '../components/AuthForm';
 import { useNavigate } from 'react-router-dom';
-import { useUser } from '../src/context/UserContext'; // 👈 import the context
-import '../src/index.css'
+import { useUser } from '../src/context/UserContext';
+import '../src/index.css';
+
 const Signup = () => {
   const [formData, setFormData] = useState({ email: '', password: '', username: '' });
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useUser(); // 👈 access setUser from context
+  const { setUser } = useUser();
 
   const handleSignup = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
     try {
       const res = await fetch('https://spin2winapi-wfc9.onrender.com/auth/signup', {
         method: 'POST',
@@ -19,7 +22,7 @@ const Signup = () => {
 
       const data = await res.json();
       if (res.ok) {
-        setUser(data.user); // ✅ save user globally
+        setUser(data.user);
         alert('✅ Account created!');
         navigate('/spin2win');
       } else {
@@ -28,6 +31,8 @@ const Signup = () => {
     } catch (err) {
       console.error(err);
       alert('Something went wrong.');
+    } finally {
+      setLoading(false); // End loading
     }
   };
 
@@ -42,6 +47,7 @@ const Signup = () => {
         onSubmit={handleSignup}
         formData={formData}
         setFormData={setFormData}
+        loading={loading} // ✅ pass loading state
       />
       <div className="change">
         Already have an account?

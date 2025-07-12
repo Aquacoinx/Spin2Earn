@@ -202,16 +202,18 @@ function Home() {
         <p className="subtitle">Spin to earn AQCNX, TON, and $100 vouchers!</p>
       </div>
 
-      <div>
-        <h2>Wallet Section</h2>
-        {wallet ? (
-          <p><strong>Connected Wallet:</strong> {wallet.account.address}</p>
-        ) : (
-          <button onClick={connectWallet} className="btn btn-primary">Connect Wallet</button>
-        )}
-      </div>
+      <div className="upper">
+        <div>
+          <h2>Wallet Section</h2>
+          {wallet ? (
+            <p><strong>Connected Wallet:</strong> {wallet.account.address}</p>
+          ) : (
+            <button onClick={connectWallet} className="btn btn-primary">Connect Wallet</button>
+          )}
+        </div>
 
-      <Logout />
+        <Logout />
+      </div>
 
       <div className="game-stats">
         <div className="stat-card"><div className="stat-label">Spins Left</div><div className="stat-value">{spinsLeft}</div></div>
