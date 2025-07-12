@@ -11,7 +11,7 @@ const Signup = () => {
   const handleSignup = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('https://spin2winapi.onrender.com/auth/signup', {
+      const res = await fetch('https://spin2winapi-wfc9.onrender.com/auth/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
