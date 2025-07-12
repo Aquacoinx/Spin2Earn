@@ -7,7 +7,7 @@ export default function ForgotPassword() {
   const [message, setMessage] = useState('');
 
   const handleRequest = async () => {
-    const res = await fetch('http://localhost:5000/api/reset-password/request', {
+    const res = await fetch('https://spin2winapi-wfc9.onrender.com/api/reset-password/request', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email }),
