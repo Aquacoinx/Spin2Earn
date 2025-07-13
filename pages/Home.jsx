@@ -208,7 +208,7 @@ function Home() {
     const fetchUserData = async () => {
       if (!user?.email) return;
       try {
-        const res = await fetch(`https://spin2winapi-wfc9.onrender.com/user?email=${user.email}`);
+        const res = await fetch(`https://spin2winapi-wfc9.onrender.com/user?email=${user?.email}`);
         const data = await res.json();
 
         if (!res.ok) {
