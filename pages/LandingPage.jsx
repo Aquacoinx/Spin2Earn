@@ -1,6 +1,6 @@
 import React from 'react';
 import '../styles/LandingPage.css';
-import previewImage from '../src/assets/splash.png';
+import previewImage from '../src/assets/Hero.png';
 import Navbar from '../components/NavBar';
 
 const LandingPage = () => {
