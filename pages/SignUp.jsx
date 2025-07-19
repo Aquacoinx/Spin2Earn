@@ -14,7 +14,7 @@ const Signup = () => {
     e.preventDefault();
     setLoading(true); // Start loading
     try {
-      const res = await fetch('https://spin2winapi-wfc9.onrender.com/auth/signup', {
+      const res = await fetch('https://spin2winapi-wfc9.onrender.com/signup', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),

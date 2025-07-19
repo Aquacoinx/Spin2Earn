@@ -119,79 +119,79 @@ function Home() {
   };
 
   const spin = async () => {
-  if (spinsLeft <= 0 || isSpinning) return;
-  setIsSpinning(true);
+    if (spinsLeft <= 0 || isSpinning) return;
+    setIsSpinning(true);
 
-  try {
-    const response = await fetch('https://spin2winapi-wfc9.onrender.com/spin', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email: user?.email }),
-    });
+    try {
+      const response = await fetch('https://spin2winapi-wfc9.onrender.com/spin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: user?.email }),
+      });
 
-    const data = await response.json();
+      const data = await response.json();
 
-    if (!response.ok) {
-      alert(data.error || 'Spin failed.');
-      setIsSpinning(false);
-      return;
-    }
-
-    // 🔍 Match backend prize with local PRIZES
-    const selectedIndex = PRIZES.findIndex(
-      (p) =>
-        p.value === data.value &&
-        p.currency === data.currency &&
-        p.type === data.type &&
-        p.angle === data.angle
-    );
-
-    if (selectedIndex === -1) {
-      alert('Invalid reward data');
-      setIsSpinning(false);
-      return;
-    }
-
-    // 🔄 Animation
-    const steps = [];
-    for (let i = 0; i < 15; i++) {
-      steps.push(Math.floor(Math.random() * PRIZES.length));
-    }
-    steps.push(selectedIndex);
-
-    let index = 0;
-    const interval = setInterval(() => {
-      setHighlightIndex(steps[index]);
-      index++;
-      if (index >= steps.length) {
-        clearInterval(interval);
-
-        const segment = PRIZES[selectedIndex];
-
-        // 🎁 Update rewards
-        if (segment.currency !== '') {
-          setRewards((prev) => {
-            const updated = { ...prev };
-            if (segment.currency === 'AQCNX') updated.AQCNX += segment.value;
-            else if (segment.currency === 'TON') updated.TON += segment.value;
-            else if (segment.currency === '$') updated.vouchers += segment.value;
-            return updated;
-          });
-
-          setRewardHistory((prev) => [segment, ...prev.slice(0, 9)]);
-          setSpinsLeft((prev) => prev - 1);
-        }
-
-        showPrizeDisplay(segment);
+      if (!response.ok) {
+        alert(data.error || 'Spin failed.');
         setIsSpinning(false);
+        return;
       }
-    }, 100);
-  } catch (err) {
-    console.error(err);
-    alert('Something went wrong!');
-    setIsSpinning(false);
-  }
-};
+
+      // 🔍 Match backend prize with local PRIZES
+      const selectedIndex = PRIZES.findIndex(
+        (p) =>
+          p.value === data.value &&
+          p.currency === data.currency &&
+          p.type === data.type &&
+          p.angle === data.angle
+      );
+
+      if (selectedIndex === -1) {
+        alert('Invalid reward data');
+        setIsSpinning(false);
+        return;
+      }
+
+      // 🔄 Animation
+      const steps = [];
+      for (let i = 0; i < 15; i++) {
+        steps.push(Math.floor(Math.random() * PRIZES.length));
+      }
+      steps.push(selectedIndex);
+
+      let index = 0;
+      const interval = setInterval(() => {
+        setHighlightIndex(steps[index]);
+        index++;
+        if (index >= steps.length) {
+          clearInterval(interval);
+
+          const segment = PRIZES[selectedIndex];
+
+          // 🎁 Update rewards
+          if (segment.currency !== '') {
+            setRewards((prev) => {
+              const updated = { ...prev };
+              if (segment.currency === 'AQCNX') updated.AQCNX += segment.value;
+              else if (segment.currency === 'TON') updated.TON += segment.value;
+              else if (segment.currency === '$') updated.vouchers += segment.value;
+              return updated;
+            });
+
+            setRewardHistory((prev) => [segment, ...prev.slice(0, 9)]);
+            setSpinsLeft((prev) => prev - 1);
+          }
+
+          showPrizeDisplay(segment);
+          setIsSpinning(false);
+        }
+      }, 100);
+    } catch (err) {
+      console.error(err);
+      alert('Something went wrong!');
+      setIsSpinning(false);
+    }
+  };
 
 
   const buySpins = (amount) => {
@@ -303,9 +303,9 @@ function Home() {
           <div className="card">
             <div className="card-title">🎫 Buy Spins</div>
             <div className="buy-spins">
-              <button className="buy-spin-btn" onClick={() => buySpins(1)}>1 Spin<br />10 aqcnx</button>
-              <button className="buy-spin-btn" onClick={() => buySpins(5)}>5 Spins<br />20 aqcnx</button>
-              <button className="buy-spin-btn" onClick={() => buySpins(10)}>10 Spins<br />50 aqcnx</button>
+              <button className="buy-spin-btn" >1 Spin<br />10 aqcnx</button>
+              <button className="buy-spin-btn" >5 Spins<br />20 aqcnx</button>
+              <button className="buy-spin-btn" >10 Spins<br />50 aqcnx</button>
               <button className="buy-spin-btn" style={{ width: '100%' }} onClick={() => buySpins(20)}>20 Spins - 100 aqcnx</button>
             </div>
           </div>
